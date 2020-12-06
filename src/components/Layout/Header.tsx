@@ -145,7 +145,7 @@ export default function Header({}: Props): ReactElement {
                 style={{
                   justifySelf: 'flex-end',
                   width: 40,
-                  marginLeft: 10
+                  paddingTop: 5
                 }}
                 src={Logo}
                 alt="Logo"
