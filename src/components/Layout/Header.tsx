@@ -21,6 +21,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Typography } from '@material-ui/core';
+import { setNavigationTab } from '../../store/slices/application';
 
 const drawerWidth = 200;
 
@@ -170,13 +171,14 @@ export default function Header({}: Props): ReactElement {
                 key={text}
                 {...(text === 'Logout' && {
                   onClick: async () => {
-                    console.log('signing out onClick');
+                    dispatch(setNavigationTab('play'));
                     history.push('/play');
                     handleDrawerClose();
                   }
                 })}
                 {...(text === 'My Profile' && {
                   onClick: () => {
+                    dispatch(setNavigationTab('myprofile'));
                     handleDrawerClose();
                     history.push('/myprofile');
                   }

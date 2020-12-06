@@ -3,10 +3,12 @@ import axios from 'axios';
 
 interface ApplicationState {
   myConnectionId: string;
+  navigationTab: string;
 }
 
 const initialState: ApplicationState = {
-    myConnectionId: ''
+  myConnectionId: '',
+  navigationTab: ''
 };
 
 const applicationSlice = createSlice({
@@ -15,12 +17,16 @@ const applicationSlice = createSlice({
   reducers: {
     setMyConnectionId: (state, { payload }) => {
       state.myConnectionId = payload;
+    },
+    setNavigationTab: (state, { payload }) => {
+      state.navigationTab = payload;
     }
   }
 });
 
-export const { setMyConnectionId } = applicationSlice.actions;
+export const { setMyConnectionId, setNavigationTab } = applicationSlice.actions;
 
-export const getApplicationState = (state: { application: ApplicationState; }) => state.application;
+export const getApplicationState = (state: { application: any }) =>
+  state.application;
 
 export default applicationSlice.reducer;
