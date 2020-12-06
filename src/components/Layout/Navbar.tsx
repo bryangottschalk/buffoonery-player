@@ -13,7 +13,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import { useSelector, useDispatch } from 'react-redux';
 import history from '../../history';
-
+import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
 const theme = createMuiTheme({
   typography: {
     fontSize: 12
@@ -21,12 +21,10 @@ const theme = createMuiTheme({
   overrides: {
     MuiBottomNavigationAction: {
       root: {
-        '&$selected': {
-          color: '#2D7BC8'
-        },
+        '&$selected': {},
         margin: '0px -15px',
         padding: '0px 15px',
-        color: grey[700]
+        color: '#19003C'
       }
     }
   }
@@ -44,52 +42,36 @@ const useStyles = makeStyles({
 });
 
 function Navbar(props: any) {
-  const classes = useStyles(props);
-
+  const classes = useStyles();
 
   return (
     <MuiThemeProvider theme={theme}>
       <nav>
-          <BottomNavigation
-            value="test"
-            className={classes.stickToBottom}
-          >
-            <BottomNavigationAction
-              component={Link}
-              to="/projects"
-              label="Projects"
-              value="projects"
-              icon={<EmojiTransportationIcon style={{ fontSize: 30 }} />}
-            />
-            <BottomNavigationAction
-              component={Link}
-              to="/feed"
-              label="Feed"
-              value="feed"
-              icon={<InsertCommentIcon style={{ fontSize: 30 }} />}
-            />
-            <BottomNavigationAction
-              component={Link}
-              to="/participate"
-              label="Participate"
-              value="participate"
-              icon={<PeopleIcon style={{ fontSize: 30 }} />}
-            />
-            <BottomNavigationAction
-              component={Link}
-              to="/dashboard"
-              label="Dashboard"
-              value="dashboard"
-              icon={<AssessmentIcon style={{ fontSize: 30 }} />}
-            />
-            <BottomNavigationAction
-              component={Link}
-              to="/notifications"
-              label="Notifications"
-              value="notifications"
-              icon={<NotificationsIcon style={{ fontSize: 30 }} />}
-            />
-          </BottomNavigation>
+        <BottomNavigation
+          style={{ backgroundColor: '#19003C' }}
+          color="primary"
+          value="test"
+          className={classes.stickToBottom}
+        >
+          <BottomNavigationAction
+            component={Link}
+            to="/play"
+            label="play"
+            value="Play"
+            icon={
+              <SportsEsportsIcon style={{ fontSize: 30, color: 'white' }} />
+            }
+          />
+          <BottomNavigationAction
+            component={Link}
+            to="/contribute"
+            label="Contribute"
+            value="contribute"
+            icon={
+              <InsertCommentIcon style={{ fontSize: 30, color: 'white' }} />
+            }
+          />
+        </BottomNavigation>
       </nav>
     </MuiThemeProvider>
   );

@@ -20,20 +20,22 @@ import grey from '@material-ui/core/colors/grey';
 import { useSelector, useDispatch } from 'react-redux';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Typography } from '@material-ui/core';
 
 const drawerWidth = 200;
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex'
+    display: 'flex',
+    marginBottom: 32
   },
   appBar: {
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    color: grey[700],
-    background: 'white'
+    color: 'white',
+    background: 'primary'
   },
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
@@ -89,7 +91,6 @@ interface Props {}
 export default function Header({}: Props): ReactElement {
   const dispatch = useDispatch();
 
-
   const classes = useStyles({});
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -118,103 +119,86 @@ export default function Header({}: Props): ReactElement {
 
   return (
     <div>
-      
-        <div className={classes.root}>
-          <CssBaseline />
-          <AppBar
-            position="fixed"
-            className={clsx(classes.appBar, {
-              [classes.appBarShift]: open
-            })}
-          >
-            <Toolbar className={classes.centerLogo}>
-            
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <IconButton
-                    color="inherit"
-                    aria-label="open drawer"
-                    onClick={handleDrawerOpen}
-                    edge="start"
-                    className={clsx(classes.menuButton, open && classes.hide)}
-                    style={{ marginRight: 'auto' }}
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                  <h1>Buffoonery</h1>
-                  {/* <Link to="/projects">
-                      Buffoonery
-                    <img
-                      style={{ width: 100, marginLeft: 10 }}
-                      src={ReachLogo}
-                      alt="Logo"
-                    ></img>
-                  </Link> */}
-                </div>
-            </Toolbar>
-          </AppBar>
-
-          <Drawer
-            className={classes.drawer}
-            variant="persistent"
-            anchor="left"
-            open={open}
-            classes={{
-              paper: classes.drawerPaper
-            }}
-          >
-            <div className={classes.drawerHeader}>
-              <IconButton onClick={handleDrawerClose}>
-                {theme.direction === 'ltr' ? (
-                  <ChevronLeftIcon />
-                ) : (
-                  <ChevronRightIcon />
-                )}
+      <div className={classes.root}>
+        <CssBaseline />
+        <AppBar
+          position="fixed"
+          className={clsx(classes.appBar, {
+            [classes.appBarShift]: open
+          })}
+        >
+          <Toolbar className={classes.centerLogo}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                className={clsx(classes.menuButton, open && classes.hide)}
+                style={{ marginRight: 'auto' }}
+              >
+                <MenuIcon />
               </IconButton>
+              <Typography variant="h6">Buffoonery</Typography>
             </div>
-            <Divider />
-            <List>
-              {['My Profile', 'Logout'].map((text, index) => (
-                <ListItem
-                  button
-                  key={text}
-                  {...(text === 'Logout' && {
-                    onClick: async () => {
-                      console.log('signing out onClick');
-                      // localStorage.clear();
-                      // history.push('/');
-                      //dispatch(fetchLogout());
-                      handleDrawerClose();
-                    }
-                  })}
-                  {...(text === 'My Profile' && {
-                    onClick: () => {
-                      handleDrawerClose();
-                      history.push('/myprofile');
-                    }
-                  })}
-                >
-                  <ListItemIcon>
-                    {index % 2 === 0 ? (
-                      <AccountCircleIcon />
-                    ) : (
-                      <ExitToAppIcon />
-                    )}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItem>
-              ))}
-            </List>
-          </Drawer>
+          </Toolbar>
+        </AppBar>
 
-          <main
-            className={clsx(classes.content, {
-              [classes.contentShift]: open
-            })}
-          >
-            <div style={{ height: '10px' }} />
-          </main>
-        </div>
-      
+        <Drawer
+          className={classes.drawer}
+          variant="persistent"
+          anchor="left"
+          open={open}
+          classes={{
+            paper: classes.drawerPaper
+          }}
+        >
+          <div className={classes.drawerHeader}>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? (
+                <ChevronLeftIcon />
+              ) : (
+                <ChevronRightIcon />
+              )}
+            </IconButton>
+          </div>
+          <Divider />
+          <List>
+            {['My Profile', 'Logout'].map((text, index) => (
+              <ListItem
+                button
+                key={text}
+                {...(text === 'Logout' && {
+                  onClick: async () => {
+                    console.log('signing out onClick');
+                    history.push('/play');
+                    handleDrawerClose();
+                  }
+                })}
+                {...(text === 'My Profile' && {
+                  onClick: () => {
+                    handleDrawerClose();
+                    history.push('/myprofile');
+                  }
+                })}
+              >
+                <ListItemIcon>
+                  {index % 2 === 0 ? <AccountCircleIcon /> : <ExitToAppIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+
+        <main
+          className={clsx(classes.content, {
+            [classes.contentShift]: open
+          })}
+        >
+          <div style={{ height: '10px' }} />
+        </main>
+      </div>
     </div>
   );
 }
