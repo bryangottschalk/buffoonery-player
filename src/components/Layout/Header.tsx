@@ -22,6 +22,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Typography } from '@material-ui/core';
 import { setNavigationTab } from '../../store/slices/application';
+import { Logo } from '../../images';
 
 const drawerWidth = 200;
 
@@ -83,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 0
   },
   centerLogo: {
-    // justifyContent: 'center'
+    // justifyContent: 'flex-end'
   }
 }));
 
@@ -128,19 +129,27 @@ export default function Header({}: Props): ReactElement {
             [classes.appBarShift]: open
           })}
         >
-          <Toolbar className={classes.centerLogo}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                edge="start"
-                className={clsx(classes.menuButton, open && classes.hide)}
-                style={{ marginRight: 'auto' }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6">Buffoonery</Typography>
+          <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              className={clsx(classes.menuButton, open && classes.hide)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6">Buffoonery</Typography>
+            <div style={{ marginLeft: 'auto' }}>
+              <img
+                style={{
+                  justifySelf: 'flex-end',
+                  width: 40,
+                  marginLeft: 10
+                }}
+                src={Logo}
+                alt="Logo"
+              ></img>
             </div>
           </Toolbar>
         </AppBar>
