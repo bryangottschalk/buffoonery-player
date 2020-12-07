@@ -61,7 +61,11 @@ export const getApplicationState = (state: { application: any }) =>
 
 export const fetchConnectToRoom = createAsyncThunk(
   'application/fetchConnectToRoom',
-  async (connectionUrl: string, thunkAPI: any) => {
+  async (
+    input: { connectionUrl: string; roomcode: string; name: string },
+    thunkAPI: any
+  ) => {
+    const { connectionUrl, roomcode, name } = input;
     try {
       thunkAPI.dispatch(connectToRoom());
       const ws = new WebSocket(connectionUrl);
@@ -70,13 +74,24 @@ export const fetchConnectToRoom = createAsyncThunk(
           const connectMsg = {
             action: 'sendmessage',
             data: {
-              msg: `CONNECTION OPENED IN ROOM: ${connectionUrl}`,
-              roomcode: ''
+              msg: `MOBILE CONNECTION OPENED IN ROOM: ${connectionUrl}`,
+              roomcode,
+              name
             }
           };
           ws.send(JSON.stringify(connectMsg));
         };
-
+        setTimeout(() => {
+          const connectMsg = {
+            action: 'sendmessage',
+            data: {
+              msg: `test comment from: ${connectionUrl}`,
+              roomcode,
+              name
+            }
+          };
+          ws.send(JSON.stringify(connectMsg));
+        }, 3000);
         thunkAPI.dispatch(connectToRoomSuccess());
       } else {
         thunkAPI.dispatch(

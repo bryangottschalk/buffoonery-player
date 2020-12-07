@@ -28,7 +28,7 @@ export default function Play({}: Props): ReactElement {
     console.log('Roomcode:', roomcode, 'Name:', name);
     const connectionUrl = `wss://da6wisihu2.execute-api.us-east-1.amazonaws.com/dev?roomcode=${roomcode}`;
     dispatch(setMyConnectionUrl(connectionUrl));
-    dispatch(fetchConnectToRoom(connectionUrl));
+    dispatch(fetchConnectToRoom({ connectionUrl, roomcode, name }));
   };
   return (
     <div style={{ margin: '0px 16px' }}>
