@@ -120,6 +120,7 @@ export default function Play({}: Props): ReactElement {
 
               <br></br>
               <TextField
+                style={{ width: 300 }}
                 value={chatMsg}
                 onInput={(e: any) => setChatMsg(e.target.value)}
                 id="outlined-basic"
@@ -133,7 +134,7 @@ export default function Play({}: Props): ReactElement {
               <Button
                 value={chatMsg}
                 onClick={sendChatMsg}
-                style={{ width: 300, margin: 16 }}
+                style={{ width: 300 }}
                 variant="contained"
                 color="primary"
               >

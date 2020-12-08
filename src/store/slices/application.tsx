@@ -87,7 +87,6 @@ export const fetchConnectToRoom = createAsyncThunk(
           thunkAPI.dispatch(connectToRoomSuccess());
         };
       } else {
-        console.log('error 3');
         thunkAPI.dispatch(connectToRoomFailure('error connecting to room'));
         return;
       }
