@@ -35,6 +35,7 @@ const applicationSlice = createSlice({
       state.loading = true;
     },
     connectToRoomFailure: (state, { payload }) => {
+      console.log('🚀 ~ file: application.tsx ~ line 38 ~ payload', payload);
       state.loading = false;
       state.isConnected = false;
       state.hasErrors = true;
@@ -69,6 +70,9 @@ export const fetchConnectToRoom = createAsyncThunk(
     try {
       thunkAPI.dispatch(connectToRoom());
       const ws = new WebSocket(connectionUrl);
+      ws.onerror = (err) => {
+        thunkAPI.dispatch(connectToRoomFailure('error connecting to room'));
+      };
       if (ws) {
         ws.onopen = async () => {
           const connectMsg = {
@@ -80,26 +84,16 @@ export const fetchConnectToRoom = createAsyncThunk(
             }
           };
           ws.send(JSON.stringify(connectMsg));
+          thunkAPI.dispatch(connectToRoomSuccess());
         };
-        setTimeout(() => {
-          const connectMsg = {
-            action: 'sendmessage',
-            data: {
-              msg: `test comment from: ${connectionUrl}`,
-              roomcode,
-              name
-            }
-          };
-          ws.send(JSON.stringify(connectMsg));
-        }, 3000);
-        thunkAPI.dispatch(connectToRoomSuccess());
       } else {
-        thunkAPI.dispatch(
-          connectToRoomFailure(new Error('error connecting to room'))
-        );
+        console.log('error 3');
+        thunkAPI.dispatch(connectToRoomFailure('error connecting to room'));
+        return;
       }
     } catch (err) {
       thunkAPI.dispatch(connectToRoomFailure(err));
+      return;
     }
   }
 );
