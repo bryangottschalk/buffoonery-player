@@ -92,7 +92,7 @@ export default function Play({}: Props): ReactElement {
             <TextField
               inputProps={{ maxLength: 4 }}
               value={roomcode}
-              onInput={(e: any) => setRoomcode(e.target.value)}
+              onInput={(e: any) => setRoomcode(e.target.value.toUpperCase())}
               id="outlined-basic"
               label="Roomcode"
               variant="outlined"
