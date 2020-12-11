@@ -35,6 +35,7 @@ const applicationSlice = createSlice({
       state.loading = true;
     },
     connectToRoomFailure: (state, { payload }) => {
+      console.log('🚀 ~ file: application.tsx ~ line 38 ~ payload', payload);
       state.loading = false;
       state.isConnected = false;
       state.hasErrors = true;
@@ -61,30 +62,37 @@ export const getApplicationState = (state: { application: any }) =>
 
 export const fetchConnectToRoom = createAsyncThunk(
   'application/fetchConnectToRoom',
-  async (connectionUrl: string, thunkAPI: any) => {
+  async (
+    input: { connectionUrl: string; roomcode: string; name: string },
+    thunkAPI: any
+  ) => {
+    const { connectionUrl, roomcode, name } = input;
     try {
       thunkAPI.dispatch(connectToRoom());
       const ws = new WebSocket(connectionUrl);
+      ws.onerror = (err) => {
+        thunkAPI.dispatch(connectToRoomFailure('error connecting to room'));
+      };
       if (ws) {
         ws.onopen = async () => {
           const connectMsg = {
             action: 'sendmessage',
             data: {
-              msg: `CONNECTION OPENED IN ROOM: ${connectionUrl}`,
-              roomcode: ''
+              msg: `MOBILE CONNECTION OPENED IN ROOM: ${connectionUrl}`,
+              roomcode,
+              name
             }
           };
           ws.send(JSON.stringify(connectMsg));
+          thunkAPI.dispatch(connectToRoomSuccess());
         };
-
-        thunkAPI.dispatch(connectToRoomSuccess());
       } else {
-        thunkAPI.dispatch(
-          connectToRoomFailure(new Error('error connecting to room'))
-        );
+        thunkAPI.dispatch(connectToRoomFailure('error connecting to room'));
+        return;
       }
     } catch (err) {
       thunkAPI.dispatch(connectToRoomFailure(err));
+      return;
     }
   }
 );
