@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-
+import { connect, send } from '@giantmachines/redux-websocket';
+import store from '../../store';
 interface ApplicationState {
   websocket: any;
   myConnectionUrl: string;
@@ -45,6 +46,18 @@ const applicationSlice = createSlice({
       state.isConnected = true;
       state.loading = false;
       state.hasErrors = false;
+    },
+    sendWebsocketMessage: (state) => {
+      state.loading = true;
+    },
+    sendWebsocketMessageFailure: (state, { payload }) => {
+      state.loading = false;
+      state.hasErrors = true;
+      state.errorMsg = payload;
+    },
+    sendWebsocketMessageSuccess: (state) => {
+      state.loading = false;
+      state.hasErrors = false;
     }
   }
 });
@@ -54,7 +67,10 @@ export const {
   setNavigationTab,
   connectToRoom,
   connectToRoomSuccess,
-  connectToRoomFailure
+  connectToRoomFailure,
+  sendWebsocketMessage,
+  sendWebsocketMessageSuccess,
+  sendWebsocketMessageFailure
 } = applicationSlice.actions;
 
 export const getApplicationState = (state: { application: any }) =>
@@ -69,30 +85,36 @@ export const fetchConnectToRoom = createAsyncThunk(
     const { connectionUrl, roomcode, name } = input;
     try {
       thunkAPI.dispatch(connectToRoom());
-      const ws = new WebSocket(connectionUrl);
-      ws.onerror = (err) => {
-        thunkAPI.dispatch(connectToRoomFailure('error connecting to room'));
-      };
-      if (ws) {
-        ws.onopen = async () => {
-          const connectMsg = {
-            action: 'sendmessage',
-            data: {
-              msg: `MOBILE CONNECTION OPENED IN ROOM: ${connectionUrl}`,
-              roomcode,
-              name
-            }
-          };
-          ws.send(JSON.stringify(connectMsg));
-          thunkAPI.dispatch(connectToRoomSuccess());
-        };
-      } else {
-        thunkAPI.dispatch(connectToRoomFailure('error connecting to room'));
-        return;
-      }
+      await thunkAPI.dispatch(connect(connectionUrl));
+      thunkAPI.dispatch(connectToRoomSuccess());
     } catch (err) {
-      thunkAPI.dispatch(connectToRoomFailure(err));
-      return;
+      thunkAPI.dispatch(connectToRoomFailure(err.message));
+    }
+  }
+);
+
+export const fetchSendWebsocketMessage = createAsyncThunk(
+  'application/sendWebsocketMessage',
+  async (
+    input: { comment: string; user: string; roomcode: string },
+    thunkAPI: any
+  ) => {
+    const { comment, roomcode } = input;
+    thunkAPI.dispatch(sendWebsocketMessage());
+
+    const connectMsg = {
+      action: 'sendmessage',
+      data: {
+        roomcode: roomcode,
+        comment
+      }
+    };
+    await thunkAPI.dispatch(send(connectMsg));
+    thunkAPI.dispatch(sendWebsocketMessageSuccess());
+
+    try {
+    } catch (err) {
+      thunkAPI.dispatch(sendWebsocketMessageFailure(err.message));
     }
   }
 );

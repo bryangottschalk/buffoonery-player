@@ -5,13 +5,15 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
 import {
   fetchConnectToRoom,
-  setMyConnectionUrl
+  setMyConnectionUrl,
+  fetchSendWebsocketMessage
 } from '../../store/slices/application';
 import { useDispatch, useSelector } from 'react-redux';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-
+import { connect, send } from '@giantmachines/redux-websocket';
+import store from '../../store';
 interface Props {}
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,13 +33,13 @@ export default function Play({}: Props): ReactElement {
 
   const [roomcode, setRoomcode] = useState('');
   const [name, setName] = useState('');
-  const [isPlayBtnDisabled, setIsPlayBtnDisabled] = useState(true)
+  const [isPlayBtnDisabled, setIsPlayBtnDisabled] = useState(true);
   if (roomcode.length === 4 && name.length > 0 && isPlayBtnDisabled) {
-    setIsPlayBtnDisabled(false)
+    setIsPlayBtnDisabled(false);
   }
   if ((roomcode.length < 4 || name.length === 0) && !isPlayBtnDisabled) {
-    setIsPlayBtnDisabled(true)
-  } 
+    setIsPlayBtnDisabled(true);
+  }
   const [chatMsg, setChatMsg] = useState('');
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -53,18 +55,22 @@ export default function Play({}: Props): ReactElement {
   }
   const classes2 = makeStyles(iconStyles);
   const handleSubmit = (event: any) => {
-    setRoomcode('');
-    setName('');
+    //setRoomcode('');
+    //setName('');
     event.preventDefault();
 
     const connectionUrl = `wss://da6wisihu2.execute-api.us-east-1.amazonaws.com/dev?roomcode=${roomcode}&name=${name}`;
     dispatch(setMyConnectionUrl(connectionUrl));
+    //store.dispatch(connect(connectionUrl));
     dispatch(fetchConnectToRoom({ connectionUrl, roomcode, name }));
   };
 
   const sendChatMsg = () => {
+    console.log('in send chat msg');
+    dispatch(
+      fetchSendWebsocketMessage({ comment: { chatMsg, name }, roomcode })
+    );
     setChatMsg('');
-    alert(`sorry, this feature isn't set up yet.`);
   };
   return (
     <div style={{ margin: '0px 16px' }}>
@@ -84,8 +90,7 @@ export default function Play({}: Props): ReactElement {
             autoComplete="off"
           >
             <TextField
-                      inputProps={{ maxLength: 4 }}
-
+              inputProps={{ maxLength: 4 }}
               value={roomcode}
               onInput={(e: any) => setRoomcode(e.target.value)}
               id="outlined-basic"
@@ -93,15 +98,19 @@ export default function Play({}: Props): ReactElement {
               variant="outlined"
             />
             <TextField
-                      inputProps={{ maxLength: 30 }}
-
+              inputProps={{ maxLength: 30 }}
               value={name}
               onInput={(e: any) => setName(e.target.value)}
               id="outlined-basic"
               label="Name"
               variant="outlined"
             />
-            <Button disabled={isPlayBtnDisabled} type="submit" variant="contained" color="primary">
+            <Button
+              disabled={isPlayBtnDisabled}
+              type="submit"
+              variant="contained"
+              color="primary"
+            >
               Play
             </Button>
           </form>
@@ -128,14 +137,13 @@ export default function Play({}: Props): ReactElement {
                 <div style={{ marginRight: 8 }}>You're connected!</div>{' '}
                 <CheckCircleIcon className={classes2.successIcon} />
               </div>
-
               <br></br>
               <TextField
                 style={{ width: 300 }}
                 value={chatMsg}
                 onInput={(e: any) => setChatMsg(e.target.value)}
                 id="outlined-basic"
-                label="Message to room"
+                label="Message room"
                 variant="outlined"
               />
             </div>
@@ -152,6 +160,9 @@ export default function Play({}: Props): ReactElement {
                 Submit
               </Button>
             </div>
+            <br></br>
+            <div>{`Roomcode: ${roomcode}`}</div>
+            <div>{`Name: ${name}`}</div>
           </div>
         </React.Fragment>
       )}
