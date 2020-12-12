@@ -81,7 +81,7 @@ export default function Play({}: Props): ReactElement {
             <a href="https://host.buffoonery.io" target="_blank">
               host.buffoonery.io
             </a>{' '}
-            on a desktop computer or smart TV.
+            on a computer or smart TV.
           </div>
           <form
             onSubmit={handleSubmit}
