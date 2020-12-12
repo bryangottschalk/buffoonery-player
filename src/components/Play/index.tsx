@@ -80,8 +80,8 @@ export default function Play({}: Props): ReactElement {
             Enter your roomcode from the host site. To start a lobby go to{' '}
             <a href="https://host.buffoonery.io" target="_blank">
               host.buffoonery.io
-            </a>
-            .
+            </a>{' '}
+            on a desktop computer or smart TV. .
           </div>
           <form
             onSubmit={handleSubmit}
