@@ -41,7 +41,7 @@ export default function websocketHandler(state = initialState, action: any) {
     case 'SET_COMMENTS':
       return {
         ...state,
-        comments: [...state.comments, ...action.comments]
+        comments: [...state.comments, ...action.comments].reverse()
       };
     default:
       return state;
