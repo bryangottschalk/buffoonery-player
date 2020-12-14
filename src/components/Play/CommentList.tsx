@@ -6,13 +6,15 @@ interface Props {}
 export default function CommentList({}: Props): ReactElement {
   const { comments } = useSelector((state: any) => state).websocket;
   return (
-    <div>
+    <div style={{ height: 300, overflow: 'scroll' }}>
       <h1>Comments</h1>
-      {comments &&
-        comments.length > 0 &&
-        comments.map((comment: any, idx: number) => (
-          <Comment comment={comment} key={idx} />
-        ))}
+      <div style={{ textAlign: 'left', margin: '0px 20px' }}>
+        {comments &&
+          comments.length > 0 &&
+          comments.map((comment: any, idx: number) => (
+            <Comment comment={comment} key={idx} />
+          ))}
+      </div>
     </div>
   );
 }
