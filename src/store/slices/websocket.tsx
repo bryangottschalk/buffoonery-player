@@ -33,7 +33,7 @@ export default function websocketHandler(state = initialState, action: any) {
         msg = JSON.parse(msg);
       }
       if (msg.comment) {
-        return { ...state, comments: [...state.comments, msg.comment] };
+        return { ...state, comments: [msg.comment, ...state.comments] };
       } else {
         return state;
       }
