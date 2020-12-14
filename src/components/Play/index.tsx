@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { ReactElement, useState, useRef } from 'react';
+import React, { ReactElement, useState, useRef, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
@@ -8,12 +8,14 @@ import {
   setMyConnectionUrl,
   fetchSendWebsocketMessage
 } from '../../store/slices/application';
+import { fetchCommentsThunk } from '../../store/slices/websocket';
 import { useDispatch, useSelector } from 'react-redux';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { connect, send } from '@giantmachines/redux-websocket';
 import store from '../../store';
+import { CommentList } from '../';
 interface Props {}
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,15 +27,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Play({}: Props): ReactElement {
-  const { loading, hasErrors, errorMsg, isConnected } = useSelector(
+  const dispatch = useDispatch();
+  const { loading, hasErrors, errorMsg, isConnected, comments } = useSelector(
     (state) => state
   ).applicationSlice;
+
   // console.log('🚀 ~ file: index.tsx ~ line 24 ~ Play ~ hasErrors', hasErrors);
   // console.log('🚀 ~ file: index.tsx ~ line 24 ~ Play ~ loading', loading);
 
   const [roomcode, setRoomcode] = useState('');
   const [name, setName] = useState('');
   const [isPlayBtnDisabled, setIsPlayBtnDisabled] = useState(true);
+  useEffect(() => {
+    if (roomcode && isConnected) {
+      dispatch(fetchCommentsThunk(roomcode));
+    }
+  }, [dispatch, isConnected, roomcode]);
   if (roomcode.length === 4 && name.length > 0 && isPlayBtnDisabled) {
     setIsPlayBtnDisabled(false);
   }
@@ -41,7 +50,6 @@ export default function Play({}: Props): ReactElement {
     setIsPlayBtnDisabled(true);
   }
   const [chatMsg, setChatMsg] = useState('');
-  const dispatch = useDispatch();
   const classes = useStyles();
   function iconStyles() {
     return {
@@ -164,6 +172,7 @@ export default function Play({}: Props): ReactElement {
             <div>{`Roomcode: ${roomcode}`}</div>
             <div>{`Name: ${name}`}</div>
           </div>
+          <CommentList></CommentList>
         </React.Fragment>
       )}
       {loading && <CircularProgress />}

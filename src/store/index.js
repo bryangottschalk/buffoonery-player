@@ -7,12 +7,12 @@ import reduxWebsocket from '@giantmachines/redux-websocket';
 
 import applicationSlice from './slices/application';
 import userSlice from './slices/user';
-// import socketMiddleware from './';
-import logger from 'redux-logger';
+import websocket from './slices/websocket';
 
 export const reducer = combineReducers({
   applicationSlice,
-  userSlice
+  userSlice,
+  websocket // for use with actions dispatched from redux-websocket package
 });
 
 const reduxWebsocketMiddleware = reduxWebsocket({
@@ -24,8 +24,8 @@ const reduxWebsocketMiddleware = reduxWebsocket({
 
 const store = configureStore({
   reducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
+  middleware: (getDefaultMiddleware) => [
+    ...getDefaultMiddleware({
       serializableCheck: {
         // Ignore these action types
         ignoredActions: [
@@ -39,6 +39,8 @@ const store = configureStore({
         // Ignore these paths in the state
         ignoredPaths: ['items.dates']
       }
-    }).concat(reduxWebsocketMiddleware)
+    }),
+    reduxWebsocketMiddleware
+  ]
 });
 export default store;

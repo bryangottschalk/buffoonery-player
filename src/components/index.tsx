@@ -7,5 +7,7 @@
 export { default as Header } from './Layout/Header';
 export { default as Navbar } from './Layout/Navbar';
 export { default as Play } from './Play';
+export { default as CommentList } from './Play/CommentList';
+export { default as Comment } from './Play/Comment';
 export { default as Contribute } from './Contribute';
 export { default as App } from '../App';
