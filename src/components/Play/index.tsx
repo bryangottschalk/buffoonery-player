@@ -76,7 +76,18 @@ export default function Play({}: Props): ReactElement {
   const sendChatMsg = () => {
     console.log('in send chat msg');
     dispatch(
-      fetchSendWebsocketMessage({ comment: { chatMsg, name }, roomcode })
+      fetchSendWebsocketMessage({
+        comment: {
+          chatMsg,
+          name,
+          timestamp: new Date().toLocaleString('en-US', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+          })
+        },
+        roomcode
+      })
     );
     setChatMsg('');
   };
