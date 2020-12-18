@@ -104,7 +104,7 @@ export default function Contribute({}: Props): ReactElement {
 
           <div
             style={{
-              height: 300,
+              height: 250,
               overflowY: 'scroll',
               textAlign: 'left',
               margin: '10px 20px 0px 20px'
