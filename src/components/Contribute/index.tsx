@@ -22,9 +22,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const handleClick = () => {
-  alert(`Sorry, this feature isn't ready yet.`);
-};
 export default function Contribute({}: Props): ReactElement {
   const dispatch = useDispatch();
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -32,16 +29,22 @@ export default function Contribute({}: Props): ReactElement {
     (state: any) => state
   ).contributeSlice;
 
-  const handleChangeCategory = (e: any) => {
-    setSelectedCategory(e.target.value);
-  };
+  const classes = useStyles();
+
   useEffect(() => {
     if (!categories.length && !loading && !hasErrors) {
       dispatch(fetchCategories());
     }
   });
 
-  const classes = useStyles();
+  const handleChangeCategory = (e: any) => {
+    setSelectedCategory(e.target.value);
+  };
+
+  const handleSubmitPrompt = (e: any) => {
+    e.preventDefault();
+    alert(`Sorry, this feature isn't ready yet.`);
+  };
 
   return (
     <div style={{ margin: '0px 16px' }}>
@@ -66,10 +69,52 @@ export default function Contribute({}: Props): ReactElement {
           </Select>
         </FormControl>
         <TextField id="outlined-basic" label="Prompt" variant="outlined" />
-        <Button onClick={handleClick} variant="contained" color="primary">
+        <Button
+          type="submit"
+          onClick={handleSubmitPrompt}
+          variant="contained"
+          color="primary"
+        >
           Submit
         </Button>
       </form>
+      {selectedCategory && (
+        <div
+          style={{
+            textAlign: 'left',
+            margin: '40px 20px 0px 20px'
+          }}
+        >
+          <h2>Existing prompts for this category:</h2>
+          {selectedCategory &&
+            categories
+              .find((c: any) => c.category === selectedCategory)
+              .prompts.map(
+                (
+                  p: {
+                    submittedBy: string;
+                    prompt: string;
+                    timestamp: string;
+                  },
+                  idx: number
+                ) => (
+                  <div key={idx} style={{ marginBottom: 12 }}>
+                    <div>
+                      <strong>Prompt:</strong> {p.prompt}
+                    </div>
+                    <div>
+                      <strong>Submitted By:</strong> {p.submittedBy}
+                    </div>
+                    <div>
+                      <strong>Timestamp: </strong>
+                      {p.timestamp}
+                    </div>
+                  </div>
+                )
+              )}
+        </div>
+      )}
+
       {hasErrors && errorMsg && (
         <div style={{ marginTop: 10, color: 'red' }}>{errorMsg}</div>
       )}
