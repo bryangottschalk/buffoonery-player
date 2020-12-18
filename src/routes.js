@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import { App, Play, Contribute } from './components';
-import { useSelector, useDispatch } from 'react-redux';
-import history from './history';
+import { Route, Switch, useHistory } from 'react-router-dom';
+import { Play, Contribute } from './components';
 const Routes = (props) => {
+  const history = useHistory();
   useEffect(() => {
-    if ((history.location.pathname = '/')) {
+    if (history.location.pathname === '/') {
       history.push('/play');
     }
-  }, []);
+  });
   return (
     <Switch>
       <Route exact path="/play" component={Play}></Route>

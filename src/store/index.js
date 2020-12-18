@@ -7,9 +7,11 @@ import reduxWebsocket from '@giantmachines/redux-websocket';
 
 import applicationSlice from './slices/application';
 import userSlice from './slices/user';
+import contributeSlice from './slices/contribute';
 import websocket from './slices/websocket';
 
 export const reducer = combineReducers({
+  contributeSlice,
   applicationSlice,
   userSlice,
   websocket // for use with actions dispatched from redux-websocket package

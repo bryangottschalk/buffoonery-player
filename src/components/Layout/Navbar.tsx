@@ -48,11 +48,6 @@ function Navbar(props: any) {
   const { navigationTab } = useSelector((state: any) => state).applicationSlice;
   const classes = useStyles();
 
-  useEffect(() => {
-    dispatch(setNavigationTab('play'));
-    history.push('/');
-  }, []);
-
   return (
     <MuiThemeProvider theme={theme}>
       <nav>
