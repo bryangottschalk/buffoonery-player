@@ -99,42 +99,45 @@ export default function Contribute({}: Props): ReactElement {
         </Button>
       </form>
       {selectedCategory && (
-        <div
-          style={{
-            maxHeight: '40vh',
-            overflowY: 'scroll',
-            textAlign: 'left',
-            margin: '40px 20px 0px 20px'
-          }}
-        >
+        <React.Fragment>
           <h2>Existing prompts for this category:</h2>
-          {selectedCategory &&
-            categories
-              .find((c: any) => c.category === selectedCategory)
-              .prompts.map(
-                (
-                  p: {
-                    submittedBy: string;
-                    prompt: string;
-                    timestamp: string;
-                  },
-                  idx: number
-                ) => (
-                  <div key={idx} style={{ marginBottom: 12 }}>
-                    <div>
-                      <strong>Prompt:</strong> {p.prompt}
+
+          <div
+            style={{
+              height: 300,
+              overflowY: 'scroll',
+              textAlign: 'left',
+              margin: '10px 20px 0px 20px'
+            }}
+          >
+            {selectedCategory &&
+              categories
+                .find((c: any) => c.category === selectedCategory)
+                .prompts.map(
+                  (
+                    p: {
+                      submittedBy: string;
+                      prompt: string;
+                      timestamp: string;
+                    },
+                    idx: number
+                  ) => (
+                    <div key={idx} style={{ marginBottom: 12 }}>
+                      <div>
+                        <strong>Prompt:</strong> {p.prompt}
+                      </div>
+                      <div>
+                        <strong>Submitted By:</strong> {p.submittedBy}
+                      </div>
+                      <div>
+                        <strong>Timestamp: </strong>
+                        {p.timestamp}
+                      </div>
                     </div>
-                    <div>
-                      <strong>Submitted By:</strong> {p.submittedBy}
-                    </div>
-                    <div>
-                      <strong>Timestamp: </strong>
-                      {p.timestamp}
-                    </div>
-                  </div>
-                )
-              )}
-        </div>
+                  )
+                )}
+          </div>
+        </React.Fragment>
       )}
 
       {hasErrors && errorMsg && (
