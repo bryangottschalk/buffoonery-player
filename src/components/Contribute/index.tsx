@@ -1,4 +1,10 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, {
+  ReactElement,
+  RefObject,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -10,7 +16,10 @@ import {
   Select
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCategories } from '../../store/slices/contribute';
+import {
+  fetchCategories,
+  fetchSavePrompt
+} from '../../store/slices/contribute';
 
 interface Props {}
 const useStyles = makeStyles((theme) => ({
@@ -41,9 +50,15 @@ export default function Contribute({}: Props): ReactElement {
     setSelectedCategory(e.target.value);
   };
 
+  const promptValueRef = useRef<any>(''); //creating a refernce for TextField Component
   const handleSubmitPrompt = (e: any) => {
     e.preventDefault();
-    alert(`Sorry, this feature isn't ready yet.`);
+    dispatch(
+      fetchSavePrompt({
+        category: selectedCategory,
+        prompt: promptValueRef.current.value
+      })
+    );
   };
 
   return (
@@ -68,7 +83,12 @@ export default function Contribute({}: Props): ReactElement {
               ))}
           </Select>
         </FormControl>
-        <TextField id="outlined-basic" label="Prompt" variant="outlined" />
+        <TextField
+          inputRef={promptValueRef}
+          id="outlined-basic"
+          label="Prompt"
+          variant="outlined"
+        />
         <Button
           type="submit"
           onClick={handleSubmitPrompt}
@@ -81,6 +101,8 @@ export default function Contribute({}: Props): ReactElement {
       {selectedCategory && (
         <div
           style={{
+            maxHeight: '40vh',
+            overflowY: 'scroll',
             textAlign: 'left',
             margin: '40px 20px 0px 20px'
           }}
