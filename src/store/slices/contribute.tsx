@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 interface ContributeState {
   loading: boolean;
@@ -58,13 +58,23 @@ export const {
   savePromptFailure
 } = contributeSlice.actions;
 
+const getConfig = (): AxiosRequestConfig => {
+  return {
+    headers: {
+      'X-Api-Key': process.env.REACT_APP_API_KEY
+    }
+  };
+};
+
 export const fetchCategories = createAsyncThunk(
   'contribute/fetchCategories',
   async (_input, thunkAPI: any) => {
     thunkAPI.dispatch(getPromptCategories());
+    const config: AxiosRequestConfig = getConfig();
     try {
       const { data } = await axios.get(
-        `https://dev-api.buffoonery.io/GetPromptCategories`
+        `${process.env.REACT_APP_API}/GetPromptCategories`,
+        config
       );
       thunkAPI.dispatch(getPromptCategoriesSuccess(data.Items));
     } catch (err) {
@@ -77,6 +87,7 @@ export const fetchSavePrompt = createAsyncThunk(
   'contribute/savePrompt',
   async (input: { category: string; prompt: string }, thunkAPI: any) => {
     thunkAPI.dispatch(savePrompt());
+    const config: AxiosRequestConfig = getConfig();
     const promptPayload = {
       prompt: input.prompt,
       submittedBy: 'someone cool',
@@ -87,10 +98,14 @@ export const fetchSavePrompt = createAsyncThunk(
       })
     };
     try {
-      await axios.put(`https://dev-api.buffoonery.io/SavePrompt`, {
-        category: input.category,
-        prompt: promptPayload
-      });
+      await axios.put(
+        `${process.env.REACT_APP_API}/SavePrompt`,
+        {
+          category: input.category,
+          prompt: promptPayload
+        },
+        config
+      );
       thunkAPI.dispatch(
         savePromptSuccess({ category: input.category, prompt: promptPayload })
       );
