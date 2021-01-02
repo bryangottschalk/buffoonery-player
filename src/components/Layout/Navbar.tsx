@@ -44,7 +44,6 @@ const useStyles = makeStyles({
 });
 
 function Navbar(props: any) {
-  console.log('process.env', process.env);
   const dispatch = useDispatch();
   const { navigationTab } = useSelector((state: any) => state).applicationSlice;
   const classes = useStyles();

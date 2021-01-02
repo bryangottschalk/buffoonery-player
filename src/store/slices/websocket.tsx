@@ -1,28 +1,45 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { getConfig } from './contribute';
 
 const SET_COMMENTS = 'SET_COMMENTS';
+const SET_COMMENTS_SUCCESS = 'SET_COMMENTS_SUCCESS';
+const SET_COMMENTS_FAILURE = 'SET_COMMENTS_FAILURE';
 
-export const setComments = (comments: any) => ({
-  type: SET_COMMENTS,
+export const setComments = () => ({
+  type: SET_COMMENTS
+});
+export const setCommentsSuccess = (comments: any) => ({
+  type: SET_COMMENTS_SUCCESS,
   comments
+});
+export const setCommentsFailure = (errorMsg: string) => ({
+  type: SET_COMMENTS_SUCCESS,
+  errorMsg
 });
 export const fetchCommentsThunk = createAsyncThunk(
   'application/sendWebsocketMessage',
   async (roomcode: string, thunkAPI: any) => {
+    const config: AxiosRequestConfig = getConfig();
+    thunkAPI.dispatch(setComments());
     try {
       const { data } = await axios.get(
-        `https://dev-api.buffoonery.io/getmeetingstate/${roomcode}`
+        `https://dev-api.buffoonery.io/GetGameroomState/${roomcode}`,
+        config
       );
-      thunkAPI.dispatch(setComments(data.comments));
+      thunkAPI.dispatch(setCommentsSuccess(data.comments));
     } catch (err) {
       console.log('ERROR fetching comments:', err);
+      thunkAPI.dispatch(setCommentsFailure(err));
     }
   }
 );
 
 const initialState = {
-  comments: []
+  comments: [],
+  loading: false,
+  hasErrors: false,
+  errorMsg: ''
 };
 
 export default function websocketHandler(state = initialState, action: any) {
@@ -37,11 +54,24 @@ export default function websocketHandler(state = initialState, action: any) {
       } else {
         return state;
       }
-
-    case 'SET_COMMENTS':
+    case SET_COMMENTS:
       return {
         ...state,
+        loading: true
+      };
+    case SET_COMMENTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        hasErrors: false,
         comments: [...state.comments, ...action.comments].reverse()
+      };
+    case SET_COMMENTS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        hasErrors: true,
+        errorMsg: action.errorMsg
       };
     default:
       return state;

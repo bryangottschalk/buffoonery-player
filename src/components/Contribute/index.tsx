@@ -20,6 +20,7 @@ import {
   fetchCategories,
   fetchSavePrompt
 } from '../../store/slices/contribute';
+import { setNavigationTab } from '../../store/slices/application';
 
 interface Props {}
 const useStyles = makeStyles((theme) => ({
@@ -37,7 +38,7 @@ export default function Contribute({}: Props): ReactElement {
   const { categories, loading, hasErrors, errorMsg } = useSelector(
     (state: any) => state
   ).contributeSlice;
-
+  const { navigationTab } = useSelector((state: any) => state).applicationSlice;
   const classes = useStyles();
 
   useEffect(() => {
@@ -45,6 +46,12 @@ export default function Contribute({}: Props): ReactElement {
       dispatch(fetchCategories());
     }
   });
+
+  useEffect(() => {
+    if (!hasErrors && !loading && !navigationTab) {
+      dispatch(setNavigationTab('contribute'));
+    }
+  }, [dispatch, hasErrors, loading, navigationTab]);
 
   const handleChangeCategory = (e: any) => {
     setSelectedCategory(e.target.value);

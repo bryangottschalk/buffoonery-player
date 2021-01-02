@@ -36,7 +36,6 @@ const applicationSlice = createSlice({
       state.loading = true;
     },
     connectToRoomFailure: (state, { payload }) => {
-      console.log('🚀 ~ file: application.tsx ~ line 38 ~ payload', payload);
       state.loading = false;
       state.isConnected = false;
       state.hasErrors = true;

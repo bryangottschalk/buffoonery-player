@@ -34,7 +34,7 @@
     "start-dev": "cross-env env-cmd -f ./environments/.env.dev react-scripts start",
     "start-qa": "cross-env env-cmd -f ./environments/.env.qa react-scripts start",
     "start-prod": "cross-env env-cmd -f ./environments/.env.prod react-scripts start",
-    "build": "cross-env REACT_APP_API=https://dev-api.buffoonery.io  react-scripts build env-cmd -f ./environments/.env.prod",
+    "build": "cross-env REACT_APP_API=https://dev-api.buffoonery.io react-scripts build env-cmd -f ./environments/.env.prod",
     "build-dev": "cross-env REACT_APP_API=https://dev-api.buffoonery.io react-scripts build -f ./environments/.env.dev",
     "build-qa": "cross-env REACT_APP_API=https://dev-api.buffoonery.io react-scripts build ./environments/.env.qa",
     "test": "react-scripts test",

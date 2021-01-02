@@ -19,7 +19,6 @@ export const reducer = combineReducers({
 
 const reduxWebsocketMiddleware = reduxWebsocket({
   dateSerializer: (date) => {
-    console.log('🚀 ~ file: index.js ~ line 20 ~ date', date);
     return date.toString();
   }
 });

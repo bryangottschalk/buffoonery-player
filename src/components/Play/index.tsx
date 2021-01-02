@@ -6,7 +6,8 @@ import { Button, CircularProgress } from '@material-ui/core';
 import {
   fetchConnectToRoom,
   setMyConnectionUrl,
-  fetchSendWebsocketMessage
+  fetchSendWebsocketMessage,
+  setNavigationTab
 } from '../../store/slices/application';
 import { fetchCommentsThunk } from '../../store/slices/websocket';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,12 +29,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Play({}: Props): ReactElement {
   const dispatch = useDispatch();
-  const { loading, hasErrors, errorMsg, isConnected, comments } = useSelector(
-    (state) => state
-  ).applicationSlice;
-
-  // console.log('🚀 ~ file: index.tsx ~ line 24 ~ Play ~ hasErrors', hasErrors);
-  // console.log('🚀 ~ file: index.tsx ~ line 24 ~ Play ~ loading', loading);
+  const {
+    loading,
+    hasErrors,
+    errorMsg,
+    isConnected,
+    comments,
+    navigationTab
+  } = useSelector((state) => state).applicationSlice;
 
   const [roomcode, setRoomcode] = useState('');
   const [name, setName] = useState('');
@@ -49,6 +52,13 @@ export default function Play({}: Props): ReactElement {
   if ((roomcode.length < 4 || name.length === 0) && !isPlayBtnDisabled) {
     setIsPlayBtnDisabled(true);
   }
+
+  useEffect(() => {
+    if (!hasErrors && !loading && !navigationTab) {
+      dispatch(setNavigationTab('play'));
+    }
+  }, [dispatch, hasErrors, loading, navigationTab]);
+
   const [chatMsg, setChatMsg] = useState('');
   const classes = useStyles();
   function iconStyles() {
@@ -63,13 +73,9 @@ export default function Play({}: Props): ReactElement {
   }
   const classes2 = makeStyles(iconStyles);
   const handleSubmit = (event: any) => {
-    //setRoomcode('');
-    //setName('');
     event.preventDefault();
-
     const connectionUrl = `wss://da6wisihu2.execute-api.us-east-1.amazonaws.com/dev?roomcode=${roomcode}&name=${name}`;
     dispatch(setMyConnectionUrl(connectionUrl));
-    //store.dispatch(connect(connectionUrl));
     dispatch(fetchConnectToRoom({ connectionUrl, roomcode, name }));
   };
 

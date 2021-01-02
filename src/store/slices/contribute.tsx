@@ -58,7 +58,7 @@ export const {
   savePromptFailure
 } = contributeSlice.actions;
 
-const getConfig = (): AxiosRequestConfig => {
+export const getConfig = (): AxiosRequestConfig => {
   return {
     headers: {
       'X-Api-Key': process.env.REACT_APP_API_KEY

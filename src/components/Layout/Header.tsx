@@ -174,7 +174,10 @@ export default function Header({}: Props): ReactElement {
           </div>
           <Divider />
           <List>
-            {['My Profile', 'Logout'].map((text, index) => (
+            {[
+              // 'My Profile',
+              'Logout'
+            ].map((text, index) => (
               <ListItem
                 button
                 key={text}
