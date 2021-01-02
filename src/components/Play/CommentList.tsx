@@ -11,10 +11,6 @@ export default function CommentList(): ReactElement {
     <div style={{ height: 300, overflow: 'scroll' }}>
       <h1>Comments</h1>
       <div style={{ textAlign: 'left', margin: '0px 20px' }}>
-        {loading && <CircularProgress />}
-        {hasErrors && errorMsg && (
-          <div style={{ marginTop: 10, color: 'red' }}>{errorMsg}</div>
-        )}
         {comments &&
           comments.length > 0 &&
           comments.map((comment: any, idx: number) => (

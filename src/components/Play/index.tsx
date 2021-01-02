@@ -9,7 +9,7 @@ import {
   fetchSendWebsocketMessage,
   setNavigationTab
 } from '../../store/slices/application';
-import { fetchCommentsThunk } from '../../store/slices/websocket';
+import { fetchInitialStateAndConnect } from '../../store/slices/websocket';
 import { useDispatch, useSelector } from 'react-redux';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
@@ -29,23 +29,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Play({}: Props): ReactElement {
   const dispatch = useDispatch();
-  const {
-    loading,
-    hasErrors,
-    errorMsg,
-    isConnected,
-    comments,
-    navigationTab
-  } = useSelector((state) => state).applicationSlice;
+  const { isConnected, comments, navigationTab } = useSelector(
+    (state) => state
+  ).applicationSlice;
+  const { loading, hasErrors, errorMsg } = useSelector(
+    (state: any) => state
+  ).websocket;
 
   const [roomcode, setRoomcode] = useState('');
   const [name, setName] = useState('');
   const [isPlayBtnDisabled, setIsPlayBtnDisabled] = useState(true);
-  useEffect(() => {
-    if (roomcode && isConnected) {
-      dispatch(fetchCommentsThunk(roomcode));
-    }
-  }, [dispatch, isConnected, roomcode]);
   if (roomcode.length === 4 && name.length > 0 && isPlayBtnDisabled) {
     setIsPlayBtnDisabled(false);
   }
@@ -75,8 +68,7 @@ export default function Play({}: Props): ReactElement {
   const handleSubmit = (event: any) => {
     event.preventDefault();
     const connectionUrl = `wss://da6wisihu2.execute-api.us-east-1.amazonaws.com/dev?roomcode=${roomcode}&name=${name}`;
-    dispatch(setMyConnectionUrl(connectionUrl));
-    dispatch(fetchConnectToRoom({ connectionUrl, roomcode, name }));
+    dispatch(fetchInitialStateAndConnect({ roomcode, connectionUrl, name }));
   };
 
   const sendChatMsg = () => {
@@ -101,6 +93,11 @@ export default function Play({}: Props): ReactElement {
     <div style={{ margin: '0px 16px' }}>
       {!isConnected ? (
         <React.Fragment>
+          {hasErrors && errorMsg && (
+            <div style={{ marginTop: 10, color: 'red' }}>
+              Error connecting to room. It may not exist, please try again.
+            </div>
+          )}
           <div style={{ marginBottom: 20 }}>
             Enter your roomcode from the host site. To start a lobby go to{' '}
             <a href="https://host.buffoonery.io" target="_blank">
@@ -181,6 +178,7 @@ export default function Play({}: Props): ReactElement {
                 style={{ width: 300 }}
                 variant="contained"
                 color="primary"
+                disabled={hasErrors}
               >
                 Submit
               </Button>

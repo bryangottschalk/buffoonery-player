@@ -1,6 +1,10 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getConfig } from './contribute';
+import {
+  fetchConnectToRoom,
+  setMyConnectionUrl
+} from '../../store/slices/application';
 
 const SET_COMMENTS = 'SET_COMMENTS';
 const SET_COMMENTS_SUCCESS = 'SET_COMMENTS_SUCCESS';
@@ -14,12 +18,17 @@ export const setCommentsSuccess = (comments: any) => ({
   comments
 });
 export const setCommentsFailure = (errorMsg: string) => ({
-  type: SET_COMMENTS_SUCCESS,
+  type: SET_COMMENTS_FAILURE,
   errorMsg
 });
-export const fetchCommentsThunk = createAsyncThunk(
-  'application/sendWebsocketMessage',
-  async (roomcode: string, thunkAPI: any) => {
+
+export const fetchInitialStateAndConnect = createAsyncThunk(
+  'application/fetchInitialStateAndConnect',
+  async (
+    input: { roomcode: string; connectionUrl: string; name: string },
+    thunkAPI: any
+  ) => {
+    const { roomcode, connectionUrl, name } = input;
     const config: AxiosRequestConfig = getConfig();
     thunkAPI.dispatch(setComments());
     try {
@@ -27,10 +36,16 @@ export const fetchCommentsThunk = createAsyncThunk(
         `https://dev-api.buffoonery.io/GetGameroomState/${roomcode}`,
         config
       );
+      // checks for existing meeting before connecting to websocket
       thunkAPI.dispatch(setCommentsSuccess(data.comments));
+      thunkAPI.dispatch(setMyConnectionUrl(connectionUrl));
+      thunkAPI.dispatch(fetchConnectToRoom({ connectionUrl, roomcode, name }));
     } catch (err) {
-      console.log('ERROR fetching comments:', err);
-      thunkAPI.dispatch(setCommentsFailure(err));
+      console.log(
+        'ERROR fetching initial state or websocket connection:',
+        err.message
+      );
+      thunkAPI.dispatch(setCommentsFailure(err.message));
     }
   }
 );
