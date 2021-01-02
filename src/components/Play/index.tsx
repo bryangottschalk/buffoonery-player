@@ -95,7 +95,8 @@ export default function Play({}: Props): ReactElement {
         <React.Fragment>
           {hasErrors && errorMsg && (
             <div style={{ marginTop: 10, color: 'red' }}>
-              Error connecting to room. It may not exist, please try again.
+              Error connecting to room. It may not exist, please double check
+              the room code on your host site try again.
             </div>
           )}
           <div style={{ marginBottom: 20 }}>
