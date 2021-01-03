@@ -61,11 +61,15 @@ export default function websocketHandler(state = initialState, action: any) {
   switch (action.type) {
     case 'REDUX_WEBSOCKET::MESSAGE': // for use with actions dispatched from redux-websocket package
       let msg = JSON.parse(action.payload.message);
+      console.log('websocket message:', msg);
       if (typeof msg === 'string') {
         msg = JSON.parse(msg);
       }
       if (msg.comment) {
         return { ...state, comments: [msg.comment, ...state.comments] };
+      } else if (msg.topic === 'DistributePromptsToPlayers') {
+        alert(`Prompt received! Submit your quip for "${msg.prompt.prompt}"`);
+        return state;
       } else {
         return state;
       }
