@@ -86,11 +86,7 @@ export default function Play({}: Props): ReactElement {
         comment: {
           chatMsg,
           name,
-          timestamp: new Date().toLocaleString('en-US', {
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true
-          })
+          timestamp: new Date().toDateString()
         },
         roomcode
       })

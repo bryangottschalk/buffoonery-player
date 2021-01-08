@@ -91,11 +91,7 @@ export const fetchSavePrompt = createAsyncThunk(
     const promptPayload = {
       prompt: input.prompt,
       submittedBy: 'someone cool',
-      timestamp: new Date().toLocaleString('en-US', {
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true
-      })
+      timestamp: new Date().toDateString()
     };
     try {
       await axios.put(
