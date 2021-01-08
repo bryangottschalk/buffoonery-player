@@ -17,6 +17,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { connect, send } from '@giantmachines/redux-websocket';
 import store from '../../store';
 import { CommentList } from '../';
+
 interface Props {}
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,13 +33,21 @@ export default function Play({}: Props): ReactElement {
   const { isConnected, comments, navigationTab } = useSelector(
     (state) => state
   ).applicationSlice;
-  const { loading, hasErrors, errorMsg } = useSelector(
-    (state: any) => state
-  ).websocket;
+
+  const {
+    loading,
+    hasErrors,
+    errorMsg,
+    hasReceivedPrompts,
+    prompt
+  } = useSelector((state: any) => state).websocket;
 
   const [roomcode, setRoomcode] = useState('');
   const [name, setName] = useState('');
   const [isPlayBtnDisabled, setIsPlayBtnDisabled] = useState(true);
+  const [chatMsg, setChatMsg] = useState('');
+  const [promptSubmission, setPromptSubmission] = useState('');
+
   if (roomcode.length === 4 && name.length > 0 && isPlayBtnDisabled) {
     setIsPlayBtnDisabled(false);
   }
@@ -52,7 +61,6 @@ export default function Play({}: Props): ReactElement {
     }
   }, [dispatch, hasErrors, loading, navigationTab]);
 
-  const [chatMsg, setChatMsg] = useState('');
   const classes = useStyles();
   function iconStyles() {
     return {
@@ -89,9 +97,22 @@ export default function Play({}: Props): ReactElement {
     );
     setChatMsg('');
   };
+
+  const sendPromptSubmission = () => {
+    const payload = {
+      action: 'sendmessage',
+      data: {
+        topic: 'PromptSubmission',
+        promptSubmission: promptSubmission,
+        roomcode
+      }
+    };
+    dispatch(send(payload));
+    setPromptSubmission('');
+  };
   return (
     <div style={{ margin: '0px 16px' }}>
-      {!isConnected ? (
+      {!isConnected && (
         <React.Fragment>
           {hasErrors && errorMsg && (
             <div style={{ marginTop: 10, color: 'red' }}>
@@ -138,7 +159,8 @@ export default function Play({}: Props): ReactElement {
             </Button>
           </form>
         </React.Fragment>
-      ) : (
+      )}
+      {isConnected && (
         <React.Fragment>
           <div
             style={{
@@ -161,21 +183,38 @@ export default function Play({}: Props): ReactElement {
                 <CheckCircleIcon className={classes2.successIcon} />
               </div>
               <br></br>
-              <TextField
-                style={{ width: 300 }}
-                value={chatMsg}
-                onInput={(e: any) => setChatMsg(e.target.value)}
-                id="outlined-basic"
-                label="Message room"
-                variant="outlined"
-              />
+              {hasReceivedPrompts && prompt ? (
+                <React.Fragment>
+                  <h1>Prompt received!</h1>
+                  <h2>{prompt}</h2>
+                  <TextField
+                    style={{ width: 300 }}
+                    value={promptSubmission}
+                    onInput={(e: any) => setPromptSubmission(e.target.value)}
+                    id="outlined-basic"
+                    label="Submit your wittiest, dumbest quip"
+                    variant="outlined"
+                  />
+                </React.Fragment>
+              ) : (
+                <TextField
+                  style={{ width: 300 }}
+                  value={chatMsg}
+                  onInput={(e: any) => setChatMsg(e.target.value)}
+                  id="outlined-basic"
+                  label="Message room"
+                  variant="outlined"
+                />
+              )}
             </div>
 
             <div>
               <br></br>
               <Button
                 value={chatMsg}
-                onClick={sendChatMsg}
+                onClick={
+                  hasReceivedPrompts ? sendPromptSubmission : sendChatMsg
+                }
                 style={{ width: 300 }}
                 variant="contained"
                 color="primary"

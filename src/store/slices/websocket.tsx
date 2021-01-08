@@ -50,26 +50,42 @@ export const fetchInitialStateAndConnect = createAsyncThunk(
   }
 );
 
-const initialState = {
+interface WebsocketState {
+  comments: any[];
+  loading: boolean;
+  hasErrors: boolean;
+  errorMsg: string;
+  hasReceivedPrompts: boolean;
+  hasSubmittedAllPrompts: boolean;
+  prompt: any;
+}
+const initialState: WebsocketState = {
   comments: [],
   loading: false,
   hasErrors: false,
-  errorMsg: ''
+  errorMsg: '',
+  hasReceivedPrompts: false,
+  hasSubmittedAllPrompts: false,
+  prompt: null
 };
 
 export default function websocketHandler(state = initialState, action: any) {
   switch (action.type) {
     case 'REDUX_WEBSOCKET::MESSAGE': // for use with actions dispatched from redux-websocket package
       let msg = JSON.parse(action.payload.message);
-      console.log('websocket message:', msg);
       if (typeof msg === 'string') {
         msg = JSON.parse(msg);
       }
       if (msg.comment) {
         return { ...state, comments: [msg.comment, ...state.comments] };
+      } else if (msg.topic === 'PromptSubmission') {
+        return { ...state, hasSubmittedAllPrompts: true };
       } else if (msg.topic === 'DistributePromptsToPlayers') {
-        alert(`Prompt received! Submit your quip for "${msg.prompt.prompt}"`);
-        return state;
+        return {
+          ...state,
+          hasReceivedPrompts: true,
+          prompt: msg.prompt.prompt
+        };
       } else {
         return state;
       }
